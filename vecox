@@ -31,11 +31,11 @@ def main():
     parser = argparse.ArgumentParser(description='vecox is an xml and html revision control software.')
     subparsers = parser.add_subparsers()
 
-    parser_init = subparsers.add_parser("init", help="initialize vecox for this directory and subdirectories")
+    parser_init = subparsers.add_parser("init", help="Initializes vecox for this directory and its subdirectories. Note that no files are added.")
     parser_init.set_defaults(func=commands.init)
-    parser_init.add_argument("--backend", default="file", help="the storage backend, default: file")
+    parser_init.add_argument("--backend", default="file", help="The storage backend, default: file")
 
-    parser_save = subparsers.add_parser("save", help="Save current revision of file(s)")
+    parser_save = subparsers.add_parser("save", help="Save current revision of file(s).")
     parser_save.set_defaults(func=commands.save)
     parser_save.add_argument("filenames", metavar="file", nargs="+", help="the file(s) to save")
     parser_save.add_argument("--backend", default="file", help="the storage backend, default: file")

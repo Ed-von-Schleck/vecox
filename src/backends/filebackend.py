@@ -57,6 +57,7 @@ class FileBackend(object):
             # write pointer to commit hash
             with open(os.path.join(vecox_root_path, vecox_DIRNAME, filename), "w") as vecoxfile:
                 vecoxfile.write(commit_hsh)
+            print("saved as revision:", commit_hsh)
 
     def history(self, filenames):
         vecox_root_path = self._abs_root_directory()
