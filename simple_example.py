@@ -24,7 +24,7 @@
 
 import io
 
-from src import vecoh
+from src import vecox
 
 html = b"""<!doctype html>
 <html>
@@ -51,6 +51,6 @@ xml = b"""<?xml version="1.0" encoding="UTF-8" ?>
 """
 
 
-for hsh, string in vecoh.parse(io.BytesIO(html), html=True):
+for hsh, string in vecox.parse(io.BytesIO(html), html=True):
     print(hsh, string)
 
