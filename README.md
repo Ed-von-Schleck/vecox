@@ -7,11 +7,9 @@ Possible use-cases include: Word- or graphic-processing applications that want t
 
 ## How It Works ##
 
-VeCoX differs from git or mercurial in that it tracks *document* revisions and has no concept of a project-wide revision. So every *save* operation on a document is comparable to a *commit* in git, except that it targets only one document (however, one can conveniently save many documents in one go).
+VeCoX differs from git or mercurial in that it tracks *document* revisions and has no concept of a project-wide revision. So every *save* operation on a document is comparable to a *commit* in git, except that it targets only one document (however, one can conveniently save many documents in one go). There's no equivalent of `git add`, since no files are tracked.
 
-VeCoX has no equivalent of `git add`, since no files are tracked.
-
-VeCoX stores documents efficiently, especially large documents with many, mostly small changes between saves. Similar to git, it tracks content, not files, so if two documents have a number of identical nodes, VeCoX save those nodes only once.
+VeCoX stores documents efficiently, especially on large documents with many, mostly small changes between saves. Similar to git, it tracks content, not files, so if two documents have a number of identical nodes, VeCoX save those nodes only once.
 
 ## Command Line Usage ##
 

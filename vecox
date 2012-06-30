@@ -44,10 +44,10 @@ def main():
     args = parser.parse_args()
     try:
         args.func(args)
-    except vecox.vecoxError as e:
+        return 0
+    except vecox.VecoxError as e:
         print("\033[91m" + "Error:" + "\033[0m", e.message)
-
-    return 0
+        return 1
 
 if __name__ == '__main__':
     main()

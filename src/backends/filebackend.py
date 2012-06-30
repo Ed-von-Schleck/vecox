@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+.. module: filebackend
+    :synopsis: Implements a file backend for VeCoX.
 
+.. moduleauthor:: Christian Schramm <christian.h.m.schramm@gmail.com>
+
+"""
 import glob
 import os
 import os.path
@@ -12,24 +18,73 @@ vecox_DIRNAME = ".vecox"
 
 @vecox.register("backend", "file")
 class FileBackend(object):
+    """The file backend class
+
+    Used by default by the command-line client (to use it explicitly,
+    pass '--backend file' as an argument to the commands.
+
+    Use it by importing directly:
+
+    >>> from src.backends import filebackend
+    >>> filebackend.FileBackend()
+    <src.backends.filebackend.FileBackend object at 0x7feb9e61e1d0>
+
+    or by using the registry:
+
+    >>> from src import backends
+    >>> from src import vecox
+    >>> Backend = vecox.registry_get("backend", "file")
+    >>> Backend()
+    <src.backends.filebackend.FileBackend object at 0x7feb9e61e390>
+
+    which is useful if you want to use a backend based on user input.
+
+    """
+
     def __init__(self):
         self._abs_root_directory_cache = None
 
     def init(self):
+        """Initalizes VeCoX for the working directory
+
+        It adds a hidden directory '.vecox', which stores the delta data.
+        Fails if it has been already initialized in this directory or in
+        one of its parent directories.
+
+        Raises:
+           VecoxError
+
+        Example:
+
+        >>> file_backend = FileBackend()
+        >>> file_backend.init()
+        Initialized VeCoX
+
+        Doing it again raises a VecoxError:
+
+        >>> file_backend.init()
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
+          File "src/backends/filebackend.py", line 66, in init
+            raise vecox.VecoxError("vecox already initialized in " + vecox_abs_path)
+        src.vecox.VecoxError: vecox already initialized in ...
+
+
+        """
         vecox_abs_path = self._abs_root_directory()
         if vecox_abs_path is not None:
-            raise vecox.vecoxError("vecox already initialized in " + vecox_abs_path)
+            raise vecox.VecoxError("VeCoX already initialized in " + vecox_abs_path)
         try:
             os.mkdir(".vecox")
         except OSError:
-            raise vecox.vecoxError("Unable to create .vecox directory")
+            raise vecox.VecoxError("Unable to create .vecox directory")
         else:
-            print("Initialized vecox")
+            print("Initialized VeCoX")
 
     def save(self, filenames, filetype, message):
         vecox_root_path = self._abs_root_directory()
         if vecox_root_path is None:
-            raise vecox.vecoxError("vecox not initialized")
+            raise vecox.VecoxError("VeCoX not initialized")
 
         rel_vecox_fileset = self._rel_vecox_fileset(filenames)
 
@@ -62,15 +117,16 @@ class FileBackend(object):
     def history(self, filenames):
         vecox_root_path = self._abs_root_directory()
         if vecox_root_path is None:
-            raise vecox.vecoxError("vecox not initialized")
+            raise vecox.VecoxError("VeCoX not initialized")
 
         rel_vecox_fileset = self._rel_vecox_fileset(filenames)
 
         if not rel_vecox_fileset:
-            raise vecox.vecoxError("No matching filename")
+            raise vecox.VecoxError("No matching filename")
 
         for filename in rel_vecox_fileset:
-            print("\n", filename, sep="")
+            print()
+            print(filename)
             print("-" * len(filename))
             with open(os.path.join(vecox_root_path, vecox_DIRNAME, filename)) as openfile:
                 commit_hsh = openfile.read()
@@ -92,12 +148,12 @@ class FileBackend(object):
             with open(os.path.join(vecox_root_path, vecox_DIRNAME, recent_commit_hsh)) as recent_commit_file:
                 mtime_commit = recent_commit_file.readline().rstrip()
             if str(mtime_file) != mtime_commit:
-                raise vecox.vecoxError("Current version of " + filename + " not saved (use '--force' to do it anyways)")
+                raise vecox.VecoxError("Current version of " + filename + " not saved (use '--force' to do it anyways)")
 
         if not commit_hsh_paths:
-            raise vecox.vecoxError("No matching revision")
+            raise vecox.VecoxError("No matching revision")
         if len(commit_hsh_paths) > 1:
-            raise vecox.vecoxError("More than one matching revision")
+            raise vecox.VecoxError("More than one matching revision")
         commit_hsh_path = commit_hsh_paths[0]
 
         def get_raw_content(hsh):
